@@ -14,9 +14,12 @@ public:
 	String();
 	String(const char str[]);
 	String(DynamicArray<char> const& arr);
+	String(char symbol);
+	String(int number);
 
+	int parseInt() const;
 	friend String operator+(String str, String str2);
 	friend String operator*(String str, int N);
 	friend ostream& operator<<(ostream& io, const String& str);
-	friend istream& operator>>(istream& io, const String& str);
+	friend istream& operator>>(istream& io, String& str);
 };

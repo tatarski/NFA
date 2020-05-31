@@ -6,27 +6,18 @@
 
 #include "String.h"
 #include "NFA.h"
-
+#include <stdio.h>
+#include "NFA_CLI.h"
 using namespace std;
 int main() {
-	NFA A;
-	A.addState("S1", false, true);
-	A.addState("S2", true, false);
-	A.addState("S3", true, false);
-
-	A.addTransition(0, 1, 'a');
-	A.addTransition(1, 2, 'a');
-
-	NFA B;
-	B.addState("S1", false, true);
-	B.addState("S2", false, false);
-	B.addState("S3", true, false);
-	B.addTransition(0, 1, 'b');
-	B.addTransition(1, 2, 'b');
-
-	cout << A;
-	cout << B;
-	cout << NFA("a+a").contains("a");
+	NFA_CLI cli1;
+	String result;
+	while (!(result == (String)"exiting...")) {
+		char command[100];
+		cin.getline(command, 100);
+		result = cli1.readCommand(String(command));
+		cout << result << endl;
+	}
 	return 0;
 }
 /*

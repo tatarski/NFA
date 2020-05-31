@@ -5,8 +5,9 @@
 class NFA_CLI
 {
 private:
-	DynamicArray<NFA> list;
+	DynamicArray<NFA> automatonList;
+	String listIdentifiers() const;
 public:
-	void readCommand(String command);
+	String readCommand(const String& command);
 };
 

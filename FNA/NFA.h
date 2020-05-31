@@ -48,6 +48,7 @@ private:
 	String alphabet;
 
 	DynamicArray<int> makeEpsilonTransition(int from) const;
+	static int getNextClosingBracketIndex(const String& str, int from);
 	static NFA getNFAFromRegex(const String regex);
 public:
 	NFA();
@@ -77,6 +78,8 @@ public:
 	NFA getConcatenation(const NFA other) const;
 	NFA getMinimal() const;
 	bool isMinimal() const;
+	String toString() const;
+
 
 
 	DynamicArray<State> getStateList() const;

@@ -26,20 +26,7 @@ NFA::State& NFA::State::operator=(const NFA::State& other) {
 }
 
 ostream& operator<<(ostream& os, const NFA& other) {
-	os << "Automata\n";
-	for (int i = 0; i < other.getStateList().length(); i++) {
-		os << other.getStateList()[i].getName() << " ";
-		if (other.getStateList()[i].getIsFinal()) {
-			os << (String)"final :";
-		}
-		if (other.getStateList()[i].getIsInitial()) {
-			os << (String)"initial :";
-		}
-		for (int j = 0; j < other.getTransitionList()[i].length(); j++) {
-			os << (String)"(" << other.getTransitionList()[i][j].letter << (String)", " << other.getStateList()[other.getTransitionList()[i][j].destination].getName() << (String)")  ";
-		}
-		os << (String)"\n";
-	}
+	os << other.toString();
 	return os;
 }
 bool NFA::State::operator==(const NFA::State& other) const {
@@ -128,16 +115,65 @@ DynamicArray<int> NFA::makeEpsilonTransition(int from) const {
 	}
 	return reachedStates;
 }
-
+int NFA::getNextClosingBracketIndex(const String& str, int from) {
+	int nOpen, i;
+	for (i = from + 1, nOpen = 1; nOpen > 0;i++) {
+		if (str[i] == '(') {
+			nOpen++;
+		}
+		if (str[i] == ')') {
+			nOpen--;
+		}
+	}
+	return i - 1;
+}
 NFA NFA::getNFAFromRegex(const String regex)
 {
-	if (regex.length() == 1) {
+	// ......
+	// Separate words
+	if (regex[0] != '(') {
 		NFA result;
-		result.addState("S", false, true);
-		result.addState("S1", true, false);
-		result.addTransition(0, 1, regex[0]);
-		result.setAlphabet(regex);
+		result.addState("S0", false, true);
+		for (int i = 0; i < regex.length(); i++) {
+			result.addState((String)"S" + String((int)i+1), false, false);
+			result.addTransition(i, i + 1, regex[i]);
+		}
+		result.setIsFinalFor(regex.length(), true);
 		return result;
+	}
+	// '(......'
+	if (regex[0] == '(') {
+		int operand1OpeningIndex = 0, operand1ClosingIndex = NFA::getNextClosingBracketIndex(regex, operand1OpeningIndex);
+		// '(......)'
+		if (operand1ClosingIndex == regex.length() - 1) {
+			return NFA(regex.getSubset(operand1OpeningIndex+1, operand1ClosingIndex));
+		}
+		// '(......)*'
+		if (operand1ClosingIndex == regex.length() - 2 && regex[operand1ClosingIndex + 1] == '*') {
+			return NFA(regex.getSubset(operand1OpeningIndex + 1, operand1ClosingIndex)).getKleeneStar();
+		}
+		// '(......).(......) or (.......)+(.......)'
+		if (operand1ClosingIndex < regex.length() - 1) {
+			int operand2OpeningIndex = operand1ClosingIndex + 2;
+			int operant2ClosingIndex = NFA::getNextClosingBracketIndex(regex, operand2OpeningIndex);
+
+			NFA a1 = NFA(
+				regex.getSubset(operand1OpeningIndex + 1, operand1ClosingIndex)
+			);
+			NFA a2 = NFA(
+					regex.getSubset(operand2OpeningIndex + 1, operant2ClosingIndex)
+				);
+			
+			char operand = regex[operand1ClosingIndex + 1];
+			// '(......).(......)
+			if (operand == '.') {
+				return a1.getConcatenation(a2);
+			}
+			// '(......)+(......)
+			if (operand == '+') {
+				return a1.getUnion(a2);
+			}
+		}
 	}
 	return NFA();
 }
@@ -246,6 +282,9 @@ DynamicArray<int> NFA::deltaFunction(DynamicArray<int> from, char letter) const 
 }
 
 DynamicArray<int> NFA::deltaStarFunction(int from, String word) const {
+	if (word.length() == 0) {
+		return this->makeEpsilonTransition(from);
+	}
 	DynamicArray<int> reachedStates;
 	reachedStates.push(from);
 	for (int i = 0; i < word.length(); i++) {
@@ -345,6 +384,7 @@ NFA NFA::getKleeneStar() const {
 		result.addTransition(result.getFinalStates()[i], newStateIndex, '\0');
 	}
 	result.setIsInitialFor(newStateIndex, true);
+	result.setIsFinalFor(newStateIndex, true);
 	return result;
 }
 
@@ -411,6 +451,26 @@ NFA NFA::getConcatenation(const NFA other) const
 		for (int j = 0; j < other.getTransitionList()[i].length(); j++) {
 			result.addTransition(otherStateIndecies[i], otherStateIndecies[other.getTransitionList()[i][j].destination], other.getTransitionList()[i][j].letter);
 		}
+	}
+	return result;
+}
+
+String NFA::toString() const
+{
+	String result;
+	result = result +  "Automata\n";
+	for (int i = 0; i < this->getStateList().length(); i++) {
+		result = result + this->getStateList()[i].getName() + " ";
+		if (this->getStateList()[i].getIsFinal()) {
+			result = result + (String)"final :";
+		}
+		if (this->getStateList()[i].getIsInitial()) {
+			result = result + (String)"initial :";
+		}
+		for (int j = 0; j < this->getTransitionList()[i].length(); j++) {
+			result = result + (String)"(" + this->getTransitionList()[i][j].letter + (String)", " + this->getStateList()[this->getTransitionList()[i][j].destination].getName() + (String)")  ";
+		}
+		result = result + (String)"\n";
 	}
 	return result;
 }

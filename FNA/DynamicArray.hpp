@@ -30,6 +30,8 @@ public:
 	//Getters
 	DynamicArray<DynamicArray<T>> getPowerset() const;
 	int indexOf(const T& el) const;
+	int indexOf(const DynamicArray<T>& el) const;
+
 	int lastIndexOf(const T& el) const;
 	int length() const;
 
@@ -141,6 +143,24 @@ int DynamicArray<T>::indexOf(const T& el) const {
 		T curEl = (this->getElement(i));
 		if (el == curEl) {
 			return i;
+		}
+	}
+	return -1;
+}
+
+template<typename T>
+inline int DynamicArray<T>::indexOf(const DynamicArray<T>& list) const
+{
+	int consequtiveEqualCount = 0;
+	for (int i = 0; i < this->length(); i++) {
+		if (list[consequtiveEqualCount] == this->arr[i]) {
+			consequtiveEqualCount++;
+			if (consequtiveEqualCount == list.length()) {
+				return i - consequtiveEqualCount + 1;
+			}
+		}
+		else {
+			consequtiveEqualCount = 0;
 		}
 	}
 	return -1;
@@ -291,7 +311,7 @@ bool DynamicArray<T>::operator==(const DynamicArray<T>& other) const {
 	}
 	return true;
 }
-
+// Returns a subset from index begin(inclusive) to index end(exclusive)
 template <typename T>
 DynamicArray<T> DynamicArray<T>::getSubset(int begin, int end) const {
 	DynamicArray<T> result;

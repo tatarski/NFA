@@ -2,7 +2,31 @@
 
 String::String() :DynamicArray<char>(1) {};
 
-String::String(DynamicArray<char> const& arr) : DynamicArray<char>(arr) {};
+String::String(DynamicArray<char> const& arr) : DynamicArray<char>(arr) {}
+String::String(char symbol):String()
+{
+	this->push(symbol);
+}
+String::String(int number)
+{
+	if (number == 0) {
+		this->push('0');
+	}
+	else {
+		for (; number > 0; number = number / 10) {
+			this->push('0' + number % 10);
+		}
+	}
+}
+int String::parseInt() const
+{
+	int result = 0;
+	for (int i = 0; i < this->length(); i++) {
+		result = (result + (this->getElement(i) - '0')) * 10;
+	}
+	return result / 10;
+}
+;
 
 String::String(const char str[]) : DynamicArray<char>(1) {
 	for (int i = 0; str[i] != '\0'; i++) {
