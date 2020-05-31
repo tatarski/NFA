@@ -27,12 +27,6 @@
     <ClInclude Include="DynamicArray1.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NFA1.cpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NFA0.cpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NFA.h">
       <Filter>Header Files</Filter>
     </ClInclude>

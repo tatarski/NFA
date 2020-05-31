@@ -160,8 +160,6 @@
     <ClInclude Include="DynamicArray.hpp" />
     <ClInclude Include="DynamicArray1.hpp" />
     <ClInclude Include="NFA.h" />
-    <ClInclude Include="NFA0.cpp" />
-    <ClInclude Include="NFA1.cpp" />
     <ClInclude Include="NFA_CLI.h" />
     <ClInclude Include="Pair.hpp" />
     <ClInclude Include="Set.hpp" />
