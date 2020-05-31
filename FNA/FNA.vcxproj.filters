@@ -24,9 +24,6 @@
     <ClInclude Include="Set.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicArray1.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NFA.h">
       <Filter>Header Files</Filter>
     </ClInclude>

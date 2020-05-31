@@ -158,7 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DynamicArray.hpp" />
-    <ClInclude Include="DynamicArray1.hpp" />
     <ClInclude Include="NFA.h" />
     <ClInclude Include="NFA_CLI.h" />
     <ClInclude Include="Pair.hpp" />
