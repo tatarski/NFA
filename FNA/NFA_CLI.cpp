@@ -9,6 +9,24 @@ String NFA_CLI::listIdentifiers() const
 	return result + "]";
 }
 
+NFA_CLI::NFA_CLI()
+{
+	this->automatonList = DynamicArray<NFA>();
+}
+
+NFA_CLI::NFA_CLI(const NFA_CLI& other)
+{
+	this->automatonList = other.automatonList;
+}
+
+NFA_CLI NFA_CLI::operator=(const NFA_CLI& other)
+{
+	if (this != &other) {
+		this->automatonList = other.automatonList;
+	}
+	return *this;
+}
+
 String NFA_CLI::readCommand(const String& command)
 {
 	if (command == (String) "exit") {
@@ -61,4 +79,8 @@ String NFA_CLI::readCommand(const String& command)
 		return this->automatonList.length() - 1;
 	}
 	return "";
+}
+
+NFA_CLI::~NFA_CLI()
+{
 }
