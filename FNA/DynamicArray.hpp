@@ -23,6 +23,7 @@ public:
 
 	void empty();
 	void push(T new_element);
+	void reverse();
 	T remove(int index);
 	T pop();
 	bool pushUnique(T el);
@@ -129,6 +130,16 @@ void DynamicArray<T>::push(T element) {
 	}
 	arr[element_count] = element;
 	this->element_count++;
+}
+
+template<typename T>
+inline void DynamicArray<T>::reverse()
+{
+	for (int i = 0; i < this->length()/2; i++) {
+		T temp = this->getElement(i);
+		this->operator[](i) = this->getElement(this->length() - i - 1);
+		this->operator[](this->length() - i - 1) = temp;
+	}
 }
 
 template <typename T>

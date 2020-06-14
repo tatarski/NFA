@@ -50,12 +50,13 @@ String NFA_CLI::readCommand(const String& command)
 		return this->automatonList[id1].toString();
 	}
 	if (command.indexOf((String)"deterministic") == 0) {
-		int id1 = ((String)command.getSubset(15, command.length())).parseInt();
+		int id1 = ((String)command.getSubset(14, command.length())).parseInt();
 		return this->automatonList[id1].isDetermined();
 	}
 	if (command.indexOf((String)"determine") == 0) {
-		int id1 = ((String)command.getSubset(15, command.length())).parseInt();
-		this->automatonList.push(this->automatonList[id1].getDetermined());
+		int id1 = ((String)command.getSubset(10, command.length())).parseInt();
+		NFA determined = this->automatonList[id1].getDetermined();
+		this->automatonList.push(determined);
 		return this->automatonList.length() - 1;
 	}
 	if (command.indexOf((String)"recognize") == 0) {

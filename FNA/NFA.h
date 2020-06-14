@@ -87,7 +87,7 @@ public:
 
 	int addState(String name, bool isFinal, bool isInitial);
 	void addTransition(int fromState, int toState, char letter);
-	void setAlphabet(String newAlphabet);
+	void setAlphabet(const String& newAlphabet);
 
 	void setNameFor(int sI, String name);
 	void setIsInitialFor(int sI, bool value);

@@ -16,6 +16,7 @@ String::String(int number)
 		for (; number > 0; number = number / 10) {
 			this->push('0' + number % 10);
 		}
+		this->reverse();
 	}
 }
 int String::parseInt() const

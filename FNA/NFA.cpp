@@ -98,6 +98,7 @@ DynamicArray<int> NFA::makeEpsilonTransition(int from) const {
 		for (int i = 0; i < reachedStates.length(); i++) {
 			int currentState = reachedStates[i];
 			DynamicArray<Edge> possibleTransitionList = this->getTransitionList()[currentState];
+
 			for (int j = 0; j < possibleTransitionList.length(); j++) {
 				Edge currentTransition = possibleTransitionList[j];
 				if (currentTransition.letter == '\0') {
@@ -130,7 +131,6 @@ int NFA::getNextClosingBracketIndex(const String& str, int from) {
 NFA NFA::getNFAFromRegex(const String regex)
 {
 	// ......
-	// Separate words
 	if (regex[0] != '(') {
 		NFA result;
 		result.addState("S0", false, true);
@@ -161,8 +161,8 @@ NFA NFA::getNFAFromRegex(const String regex)
 				regex.getSubset(operand1OpeningIndex + 1, operand1ClosingIndex)
 			);
 			NFA a2 = NFA(
-					regex.getSubset(operand2OpeningIndex + 1, operant2ClosingIndex)
-				);
+				regex.getSubset(operand2OpeningIndex + 1, operant2ClosingIndex)
+			);
 			
 			char operand = regex[operand1ClosingIndex + 1];
 			// '(......).(......)
@@ -308,7 +308,31 @@ DynamicArray<int> NFA::deltaStarFunction(DynamicArray<int> from, String word) co
 	return reachedStates;
 }
 NFA NFA::getDetermined() const {
-	DynamicArray<DynamicArray<Edge>> newTransitionList = DynamicArray<DynamicArray<Edge>>(1);
+	NFA result;
+	result.setAlphabet(this->getAlphabet());
+	for (int i = 0; i < pow(2, this->getStateList().length()); i++) {
+		DynamicArray<int> currentStates = this->getStateList().getSubsetIndecies(i);
+
+		bool isNewStateFinal = false, isNewStateInitial = false;
+		int nOfInitial = 0;
+		for (int k = 0; k < currentStates.length(); k++) {
+			nOfInitial += this->getStateList()[currentStates[k]].getIsInitial();
+			isNewStateFinal = isNewStateFinal || this->getStateList()[currentStates[k]].getIsFinal();
+		}
+		isNewStateInitial = nOfInitial == this->getInitialStates().length();
+		result.addState(i, isNewStateFinal, isNewStateInitial);
+	}
+	for (int i = 0; i < pow(2, this->getStateList().length()); i++) {
+		DynamicArray<int> currentStates = this->getStateList().getSubsetIndecies(i);
+
+		for (int j = 0; j < this->getAlphabet().length(); j++) {
+			DynamicArray<int> newStates = this->deltaFunction(currentStates, this->getAlphabet()[j]);
+			result.addTransition(i, this->getStateList().getSubsetNumber(newStates), this->getAlphabet()[j]);
+		}
+	}
+
+	return result;
+	/*DynamicArray<DynamicArray<Edge>> newTransitionList = DynamicArray<DynamicArray<Edge>>(1);
 	DynamicArray<State> newStateList;
 	NFA result(this->getAlphabet());
 	result.setAlphabet(this->getAlphabet());
@@ -330,13 +354,14 @@ NFA NFA::getDetermined() const {
 
 		for (int j = 0; j < alphabet.length(); j++) {
 			DynamicArray<int> newStates = this->deltaFunction(currentStates, alphabet[j]);
-			//cout << i << " " << A.stateList.getSubsetNumber(newStates) << " "<<alphabet[i] << endl;
+			//
+			<< i << " " << A.stateList.getSubsetNumber(newStates) << " "<<alphabet[i] << endl;
 			//this->printStates(newStates);
 			//cout << "Subset Number: " << A.stateList.getSubsetNumber(newStates) << endl;
 			result.addTransition(i, this->getStateList().getSubsetNumber(newStates), alphabet[j]);
 		}
 	}
-	return result;
+	return result;*/
 }
 
 bool NFA::isDetermined() const {
@@ -460,7 +485,7 @@ String NFA::toString() const
 	String result;
 	result = result +  "Automata\n";
 	for (int i = 0; i < this->getStateList().length(); i++) {
-		result = result + this->getStateList()[i].getName() + " ";
+		result = result + i + " ";
 		if (this->getStateList()[i].getIsFinal()) {
 			result = result + (String)"final :";
 		}
@@ -468,7 +493,7 @@ String NFA::toString() const
 			result = result + (String)"initial :";
 		}
 		for (int j = 0; j < this->getTransitionList()[i].length(); j++) {
-			result = result + (String)"(" + this->getTransitionList()[i][j].letter + (String)", " + this->getStateList()[this->getTransitionList()[i][j].destination].getName() + (String)")  ";
+			result = result + (String)"(" + this->getTransitionList()[i][j].letter + (String)", " + this->getTransitionList()[i][j].destination + (String)")  ";
 		}
 		result = result + (String)"\n";
 	}
@@ -491,10 +516,13 @@ int NFA::addState(String name, bool isFinal, bool isInitial) {
 }
 
 void NFA::addTransition(int fromState, int toState, char letter) {
+	if (letter != '\0') {
+		this->alphabet.pushUnique(letter);
+	}
 	this->transitionList[fromState].push(NFA::Edge(toState, letter));
 }
 
-void NFA::setAlphabet(String newAlphabet) {
+void NFA::setAlphabet(const String& newAlphabet) {
 	/*for (int i = 0; i < transitionList.length(); i++) {
 		for (int j = 0; j < transitionList[j].length(); j++) {
 			if (-1 == newAlphabet.indexOf(transitionList[i][j].letter) && transitionList[i][j].letter!='\0') {
