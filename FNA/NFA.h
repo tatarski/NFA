@@ -12,11 +12,11 @@ public:
 		bool isFinal;
 	public:
 		State(String name, bool isFinal, bool isInitial);
-		State(DynamicArray<State> const& stateList, bool ifFinal, bool isInitial);
+		State(const DynamicArray<State>& stateList, bool ifFinal, bool isInitial);
 		State(const State& other);
 
 		bool operator==(const State& other) const;
-		NFA::State& operator=(State const& other);
+		NFA::State& operator=(const State& other);
 
 		String getName() const;
 		bool getIsInitial() const;
@@ -49,10 +49,10 @@ private:
 
 	DynamicArray<int> makeEpsilonTransition(int from) const;
 	static int getNextClosingBracketIndex(const String& str, int from);
-	static NFA getNFAFromRegex(const String regex);
+	static NFA getNFAFromRegex(const String& regex);
 public:
 	NFA();
-	NFA(const String regex);
+	NFA(const String& regex);
 	NFA(const NFA& other);
 
 	NFA& operator=(const NFA& other);
@@ -64,18 +64,18 @@ public:
 	String getAlphabet() const;
 
 	DynamicArray<int> getInitialStates() const;
-	DynamicArray<int> getFinalStates() const;
+	const DynamicArray<int> getFinalStates() const;
 	DynamicArray<int> deltaFunction(int from, char letter) const;
-	DynamicArray<int> deltaFunction(DynamicArray<int> from, char letter) const;
-	DynamicArray<int> deltaStarFunction(int from, String word) const;
-	DynamicArray<int> deltaStarFunction(DynamicArray<int> from, String word) const;
+	DynamicArray<int> deltaFunction(const DynamicArray<int>& from, char letter) const;
+	DynamicArray<int> deltaStarFunction(int from, const String& word) const;
+	DynamicArray<int> deltaStarFunction(const DynamicArray<int>& from, const String& word) const;
 	NFA getDetermined() const;
 	bool isDetermined() const;
-	bool contains(String const word) const;
+	bool contains(const String& word) const;
 	NFA getKleeneStar() const;
-	NFA getUnion(const NFA other) const;
-	NFA getIntersection(const NFA other) const;
-	NFA getConcatenation(const NFA other) const;
+	NFA getUnion(const NFA& other) const;
+	NFA getIntersection(const NFA& other) const;
+	NFA getConcatenation(const NFA& other) const;
 	NFA getMinimal() const;
 	bool isMinimal() const;
 	String toString() const;
@@ -85,15 +85,12 @@ public:
 	DynamicArray<State> getStateList() const;
 	DynamicArray<DynamicArray<Edge>> getTransitionList() const;
 
-	int addState(String name, bool isFinal, bool isInitial);
+	int addState(const String& name, bool isFinal, bool isInitial);
 	void addTransition(int fromState, int toState, char letter);
 	void setAlphabet(const String& newAlphabet);
 
-	void setNameFor(int sI, String name);
+	void setNameFor(int sI, const String& name);
 	void setIsInitialFor(int sI, bool value);
 	void setIsFinalFor(int sI, bool value);
-
-
-	~NFA();
 
 };

@@ -128,7 +128,7 @@ int NFA::getNextClosingBracketIndex(const String& str, int from) {
 	}
 	return i - 1;
 }
-NFA NFA::getNFAFromRegex(const String regex)
+NFA NFA::getNFAFromRegex(const String& regex)
 {
 	// ......
 	if (regex[0] != '(') {
@@ -184,7 +184,7 @@ NFA::NFA() {
 	this->alphabet = "";
 }
 
-NFA::NFA(const String regex) {
+NFA::NFA(const String& regex) {
 	NFA res = NFA::getNFAFromRegex(regex);
 	this->stateList = res.getStateList();
 	this->transitionList = res.getTransitionList();
@@ -233,7 +233,7 @@ DynamicArray<int> NFA::getInitialStates() const {
 	return result;
 }
 
-DynamicArray<int> NFA::getFinalStates() const {
+const DynamicArray<int> NFA::getFinalStates() const {
 	DynamicArray<int> result;
 	DynamicArray<State> stateList = this->getStateList();
 	for (int i = 0; i < stateList.length(); i++) {
@@ -272,7 +272,7 @@ DynamicArray<int> NFA::deltaFunction(int from, char letter) const {
 	return newStates;
 }
 
-DynamicArray<int> NFA::deltaFunction(DynamicArray<int> from, char letter) const {
+DynamicArray<int> NFA::deltaFunction(const DynamicArray<int>& from, char letter) const {
 	DynamicArray<int> newStates;
 	for (int i = 0; i < from.length(); i++) {
 		int currentState = from[i];
@@ -281,7 +281,7 @@ DynamicArray<int> NFA::deltaFunction(DynamicArray<int> from, char letter) const 
 	return newStates;
 }
 
-DynamicArray<int> NFA::deltaStarFunction(int from, String word) const {
+DynamicArray<int> NFA::deltaStarFunction(int from, const String& word) const {
 	if (word.length() == 0) {
 		return this->makeEpsilonTransition(from);
 	}
@@ -299,7 +299,7 @@ DynamicArray<int> NFA::deltaStarFunction(int from, String word) const {
 	}
 	return reachedStates;
 }
-DynamicArray<int> NFA::deltaStarFunction(DynamicArray<int> from, String word) const {
+DynamicArray<int> NFA::deltaStarFunction(const DynamicArray<int>& from, const String& word) const {
 	DynamicArray<int> reachedStates;
 	for (int i = 0; i < from.length(); i++) {
 		int currentState = from[i];
@@ -393,7 +393,7 @@ bool NFA::isDetermined() const {
 	return true;
 }
 
-bool NFA::contains(String const word) const {
+bool NFA::contains(const String& word) const {
 	return this->deltaStarFunction(this->getInitialStates(), word).getIntersection(this->getFinalStates()).length() != 0;
 }
 
@@ -413,7 +413,7 @@ NFA NFA::getKleeneStar() const {
 	return result;
 }
 
-NFA NFA::getUnion(const NFA other) const
+NFA NFA::getUnion(const NFA& other) const
 {
 	NFA result;
 	int unionInitialStateIndex = result.addState("SU", false, true);
@@ -446,7 +446,7 @@ NFA NFA::getUnion(const NFA other) const
 	return result;
 }
 
-NFA NFA::getConcatenation(const NFA other) const
+NFA NFA::getConcatenation(const NFA& other) const
 {
 	NFA result;
 	DynamicArray<int> thisStateIndecies, otherStateIndecies,
@@ -509,7 +509,7 @@ DynamicArray<DynamicArray<NFA::Edge>> NFA::getTransitionList() const {
 	return this->transitionList;
 }
 
-int NFA::addState(String name, bool isFinal, bool isInitial) {
+int NFA::addState(const String& name, bool isFinal, bool isInitial) {
 	this->stateList.push(State(name, isFinal, isInitial));
 	this->transitionList.push(DynamicArray<NFA::Edge>());
 	return this->stateList.length() - 1;
@@ -534,7 +534,7 @@ void NFA::setAlphabet(const String& newAlphabet) {
 	this->alphabet = newAlphabet;
 }
 
-void NFA::setNameFor(int sI, String name) {
+void NFA::setNameFor(int sI, const String& name) {
 	this->stateList[sI].setName(name);
 }
 
@@ -545,4 +545,4 @@ void NFA::setIsFinalFor(int sI, bool value) {
 void NFA::setIsInitialFor(int sI, bool value) {
 	this->stateList[sI].setIsInitial(value);
 }
-NFA::~NFA() {}
+

@@ -1,9 +1,11 @@
 #include "String.h"
+#include "String.h"
 
 String::String() :DynamicArray<char>(1) {};
 
 String::String(DynamicArray<char> const& arr) : DynamicArray<char>(arr) {}
-String::String(char symbol):String()
+
+String::String(char symbol) : String()
 {
 	this->push(symbol);
 }
@@ -21,13 +23,37 @@ String::String(int number)
 }
 int String::parseInt() const
 {
-	int result = 0;
-	for (int i = 0; i < this->length(); i++) {
+	int result = 0, l = this->length();
+	for (int i = 0; i < l; i++) {
 		result = (result + (this->getElement(i) - '0')) * 10;
 	}
 	return result / 10;
 }
-;
+bool String::operator==(const char word[]) const
+{
+	int l = this->length();
+	if (word[l] != '\0') {
+		return false;
+	}
+	for (int i = 0; i < l; i++) {
+		if (this->arr[i] != word[i]) {
+			return false;
+		}
+	}
+	return true;
+};
+bool String::operator==(const String& s) const {
+	int l = this->length();
+	if (l != s.length()) {
+		return false;
+	}
+	for (int i = 0; i < l; i++) {
+		if (this->arr[i] != s[i]) {
+			return false;
+		}
+	}
+	return true;
+}
 
 String::String(const char str[]) : DynamicArray<char>(1) {
 	for (int i = 0; str[i] != '\0'; i++) {
@@ -35,22 +61,22 @@ String::String(const char str[]) : DynamicArray<char>(1) {
 	}
 };
 
-String String::concat(String str1, String str2) {
+String String::concat(const String& str1, const String& str2) {
 	String new_str = String(str1);
-
-	for (int i = 0; i < str2.length(); i++) {
+	int l = str2.length();
+	for (int i = 0; i < l; i++) {
 		new_str.push(str2.getElement(i));
 	}
 	return new_str;
 };
 
 
-String operator+(String str, String str2) {
-	String result = String::concat(str, str2);
+String operator+(const String& str1, const String& str2) {
+	String result = String::concat(str1, str2);
 	return result;
 };
 
-String operator*(String str, int N) {
+String operator*(const String& str, int N) {
 	String result = "";
 	for (int i = 0; i < N; i++) {
 		result = String::concat(result, str);
@@ -59,7 +85,8 @@ String operator*(String str, int N) {
 };
 
 ostream& operator<<(ostream& os, const String& str) {
-	for (int i = 0; i < str.length(); i++) {
+	int l = str.length();
+	for (int i = 0; i < l; i++) {
 		os << str.getElement(i);
 	}
 	return os;
